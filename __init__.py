@@ -1,8 +1,9 @@
 """
 DiffPy is a Python library for discrete mathematics. It aims to become
 a fully functional computer algebra system (CAS), while keeping
-the code as simple as possible so that it is understandable and easily extensible.  DiffPy
-is written entirely in Python. DiffPy is also able to solve problems related to finding derivatives and integrals of complex functions
+the code as simple as possible so that it is understandable and easily extensible.  
+DiffPy is written entirely in Python. DiffPy is also able to solve problems 
+related to finding derivatives and integrals of complex functions
 
 Contact us for more information:
 

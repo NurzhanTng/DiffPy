@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Union
 
 class Equation():
-    def __init__(self, const, func, power) -> None:
+    def __init__(self, const:int, func:Union[str, list[str, Equation]], power:Union[int, Equation]) -> None:
         self.data = {
             'const': const, 
             'func': func, 
@@ -21,19 +21,20 @@ class Equation():
                 self.data['const'] += other.data['const']
                 return self
 
-            elif self.data['func'][0] == 'sum':
+            elif self.data[pow] == 1 and  self.data['func'][0] == 'sum':
                 for i in range(1, len(self.data['func'])):
-                    if not isinstance(self.data['func'][i], Equation):
-                        print(self.data['func'][i], other.data['func'])
-                        continue
-                    if self.data['func'][i].data['func'] == other.data['func']:
-                        self.data['func'][i].data['const'] += other.data['const']
+                    if not isinstance(self.data['func'][i], Equation): continue
+                    if self.data['func'][i].data['func'] == other.data['func'] and self.data['func'][i].data['pow'] == other.data['pow']:
+                        self.data['func'][i].data['const'] += (other.data['const']) / self.data['const']
                         return self
 
+                other.data['const'] /= self.data['const']
                 self.data['func'].append(other)
                 return self
 
             return Equation(1, ['sum', self, other], 1)
+        
+        raise Exception(f'Incorrect type of {other}: {type(other)}. It can be {int} or {self}')
 
 
     def __radd__(self, other:Union[int, Equation]):
@@ -57,28 +58,71 @@ class Equation():
         return self.__add__(other)
 
 
-    def __mul__(self, other:Equation):
-        if type(other) == type(self):
-            return Equation(self.data * other.data)
-        if type(other) == type(1):
-            return Equation(self.data * other)
+    def __mul__(self, other:Union[int, Equation]):
+        self.print_step('__mul__', other)
+
+        if isinstance(other, int):
+            self.data['const'] *= other
+            return self
+
+        if isinstance(other, Equation):
+            if self.data['func'] == other.data['func']:
+                self.data['const'] *= other.data['const']
+                self.data['pow'] += other.data['pow']
+                return self
+
+            elif self.data['func'][0] == 'mul':
+                for i in range(1, len(self.data['func'])):
+                    if not isinstance(self.data['func'][i], Equation): continue
+
+                    if self.data['func'][i].data['func'] == other.data['func']:
+                        self.data['const'] *= other.data['const'] / self.data['const']
+                        self.data['pow'] += other.data['pow'] / self.data['pow']
+                        return self
+
+                other.data['const'] /= self.data['const']
+                self.data['func'].append(other)
+                return self
+
+            elif self.data[pow] == 1 and self.data['func'][0] == 'div':
+                eq:Union[int, Equation] = self.data['func'][1].data
+
+                if isinstance(eq['func'], list):
+                    if eq['func'][0] == 'mul':
+                        for i in range(1, len(self.data['func'])):
+                            if not isinstance(self.data['func'][i], Equation): continue
+
+                            if self.data['func'][i].data['func'] == other.data['func']:
+                                self.data['const'] *= other.data['const'] / self.data['const']
+                                self.data['pow'] += other.data['pow'] / self.data['pow']
+                                return self
+                                
+                        other.data['const'] /= self.data['const']
+                        other.data['pow'] /= self.data['pow']
+                        eq['func'].append(other)
+                        return self
+
+            self.data['func'][1] = Equation(1, ['mul', self.data['func'][1], ], 1)
+            return self
+
         raise Exception(f'Incorrect type of {other}: {type(other)}. It can be {int} or {self}')
 
 
-    def __rmul__(self, other):
+    def __rmul__(self, other:Union[int, Equation]): 
+        self.print_step('__rmul__', other)
         return self.__mul__(other)
 
 
-    def __truediv__(self, other:Equation):
-        if type(other) == type(self):
-            return Equation(self.data / other.data)
-        if type(other) == type(1):
-            return Equation(self.data / other)
-        raise Exception(f'Incorrect type of {other}: {type(other)}. It can be {int} or {self}')
+    def __truediv__(self, other:Union[int, Equation]): NotImplemented
     
 
-    def __rtruediv__(self, other):
-        return self.__truediv__(other)
+    def __rtruediv__(self, other:Union[int, Equation]): NotImplemented
+
+
+    def __pow__(self, other:Union[int, Equation]): NotImplemented
+
+
+    def __rpow__(self, other:Union[int, Equation]): NotImplemented
 
 
     def show_data(self, func=None):
@@ -113,7 +157,7 @@ class Equation():
         print(string)
 
 
-    def show_equation(self):
+    def to_string(self):
         const, func, power = self.data.values()
         string = str(const) + '*' if const != 1 else ''
 
@@ -127,7 +171,7 @@ class Equation():
                         string += ' + '
 
                     if isinstance(el, Equation):
-                        string += f'({el.show_equation()})'
+                        string += f'({el.to_string()})'
                     else:
                         string += str(el)
                 
@@ -139,11 +183,28 @@ class Equation():
 
     def print_step(self, func, other):
         if isinstance(other, Equation):
-            print(f"{func}:\n   self: {self.show_equation()}\n   other: {other.show_equation()}\n")
+            print(f"{func}:\n   self: {self.to_string()}\n   other: {other.to_string()}\n")
         if isinstance(other, int):
-            print(f"{func}:\n   self: {self.show_equation()}\n   other: {other}\n")
+            print(f"{func}:\n   self: {self.to_string()}\n   other: {other}\n")
 
 
 
 def x()-> Equation: 
+    '''
+    Function for creating a variable x.
+    It is forbidden to call 1 time and use several times.\n
+    You need to write it as:
+          from diffpy import x\n
+          equation = x() + x()\n
+
+    The following code will execute incorrectly:
+          from diffpy import x\n
+          equation = x + x, 
+    or  
+          import diffpy as df\n
+          x = df.x()\n
+          equation = x + x\n
+    '''
+
+
     return Equation(1, 'x', 1)

@@ -41,6 +41,6 @@ print(f'A - B: {c2.return_data()}     ||| {c2}')
 print(f'A * B: {d.return_data()}     ||| {d}')
 
 
-# x = F(1)
-# eq = x*5-6
-# print( eq.return_data() )
+x = F(1)
+eq = x*5-6
+print( eq.return_data() )
