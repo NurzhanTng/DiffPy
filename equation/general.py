@@ -11,13 +11,13 @@ class Equation():
 
 
     def __add__(self, other:Union[int, Equation]):
+        if isinstance(other, int):
+            return Equation(1, ['sum', self, other], 1)
+
         if isinstance(other, Equation):
             if self.data['func'] == other.data['func']:
                 self.data['const'] += other.data['const']
                 return self
-            return Equation(1, ['sum', self, other], 1)
-
-        if isinstance(other, int):
             return Equation(1, ['sum', self, other], 1)
 
 
@@ -94,6 +94,31 @@ class Equation():
         string = return_equation(self, 0)
         print(string)
 
+
+    def show_equation(self):
+        const, func, power = self.data.values()
+        string = str(const) + '*'
+
+        if func == 'x':
+            string += f'x'
+        elif isinstance(func, list):
+            string += '('
+            if func[0] == 'sum':
+                for i in range(1, len(func)):
+                    el = func[i]
+                    if i > 1:
+                        string += ' + '
+
+                    if isinstance(el, Equation):
+                        string += f' {el.show_equation()} '
+                    else:
+                        string += str(el)
+                    
+            string += ')'
+
+        string += f'^{power}'
+
+        return string
 
 
 def x()-> Equation: 
