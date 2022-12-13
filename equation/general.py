@@ -11,6 +11,8 @@ class Equation():
 
 
     def __add__(self, other:Union[int, Equation]):
+        self.print_step('__add__', other)
+
         if isinstance(other, int):
             return Equation(1, ['sum', self, other], 1)
 
@@ -18,23 +20,39 @@ class Equation():
             if self.data['func'] == other.data['func']:
                 self.data['const'] += other.data['const']
                 return self
+
+            elif self.data['func'][0] == 'sum':
+                for i in range(1, len(self.data['func'])):
+                    if not isinstance(self.data['func'][i], Equation):
+                        print(self.data['func'][i], other.data['func'])
+                        continue
+                    if self.data['func'][i].data['func'] == other.data['func']:
+                        self.data['func'][i].data['const'] += other.data['const']
+                        return self
+
+                self.data['func'].append(other)
+                return self
+
             return Equation(1, ['sum', self, other], 1)
 
 
     def __radd__(self, other:Union[int, Equation]):
+        self.print_step('__radd__', other)
         return self.__add__(other)
 
 
     def __sub__(self, other:Union[int, Equation]):
+        self.print_step('__sub__', other)
         if isinstance(other, Equation):
             other.data['const'] *= -1
-        if isinstance(other, int):
+        elif isinstance(other, int):
             other *= -1
         
         return self.__add__(other)
 
 
     def __rsub__(self, other:Union[int, Equation]):
+        self.print_step('__rsub__', other)
         self.data['const'] *= -1
         return self.__add__(other)
 
@@ -97,12 +115,11 @@ class Equation():
 
     def show_equation(self):
         const, func, power = self.data.values()
-        string = str(const) + '*'
+        string = str(const) + '*' if const != 1 else ''
 
         if func == 'x':
             string += f'x'
         elif isinstance(func, list):
-            string += '('
             if func[0] == 'sum':
                 for i in range(1, len(func)):
                     el = func[i]
@@ -110,15 +127,22 @@ class Equation():
                         string += ' + '
 
                     if isinstance(el, Equation):
-                        string += f' {el.show_equation()} '
+                        string += f'({el.show_equation()})'
                     else:
                         string += str(el)
-                    
-            string += ')'
-
-        string += f'^{power}'
+                
+        if power != 1:
+            string = f'({string})^{power}'
 
         return string
+
+
+    def print_step(self, func, other):
+        if isinstance(other, Equation):
+            print(f"{func}:\n   self: {self.show_equation()}\n   other: {other.show_equation()}\n")
+        if isinstance(other, int):
+            print(f"{func}:\n   self: {self.show_equation()}\n   other: {other}\n")
+
 
 
 def x()-> Equation: 
