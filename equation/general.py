@@ -134,11 +134,13 @@ class Equation():
 
 
     def __pow__(self, other:Union[int, Equation]):
+        self.print_step('__pow__', other)
         self.data['pow'] = other * self.data['pow']
         return self
 
 
     def __rpow__(self, other:Union[int, Equation]):
+        self.print_step('__rpow_', other)
         if isinstance(other, Equation):
             other.data['pow'] = self * other.data['pow']
             return other
@@ -202,10 +204,11 @@ class Equation():
 
 
     def print_step(self, func, other):
-        if isinstance(other, Equation):
-            print(f"{func}:\n   self: {self.to_string()}\n   other: {other.to_string()}\n")
-        if isinstance(other, int):
-            print(f"{func}:\n   self: {self.to_string()}\n   other: {other}\n")
+        # if isinstance(other, Equation):
+        #     print(f"{func}:\n   self: {self.to_string()}\n   other: {other.to_string()}\n")
+        # if isinstance(other, int):
+        #     print(f"{func}:\n   self: {self.to_string()}\n   other: {other}\n")
+        ...
 
 
 
