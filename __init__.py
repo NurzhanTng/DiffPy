@@ -15,7 +15,7 @@ Contact us for more information:
 
 from .equation import (Equation, x)
 
-from .diffmath import (Sin, )
+from .diffmath import (Sin, Cos, Tg, Ctg)
 
 
 __all__ = [
@@ -23,5 +23,5 @@ __all__ = [
     'Equation', 'x'
 
     # diffpy.diffmath
-    'Sin'
+    'Sin', 'Cos', 'Tg', 'Ctg'
 ]

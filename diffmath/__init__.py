@@ -1,6 +1,6 @@
-from .trigonometric import Sin
+from .trigonometric import Sin, Cos, Tg, Ctg
 
 __all__ = [
     # diffpy.diffmath.dsin
-    'Sin',
+    'Sin', 'Cos', 'Tg', 'Ctg'
 ]

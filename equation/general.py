@@ -10,29 +10,49 @@ class Equation():
         }
 
 
-    def __add__(self, other:Union[int, Equation]):
+    def __add__(self, other:Union[int, float, Equation]):
         self.print_step('__add__', other)
+        
+        if isinstance(other, x):
+            other = other * 1
 
-        if isinstance(other, int):
+        if isinstance(other, Union[int, float]):
             if self.data['pow'] == 1 and  self.data['func'][0] == 'sum':
                 self.data['func'].append(other / self.data['const'])
                 return self
             return Equation(1, ['sum', self, other], 1)
 
         if isinstance(other, Equation):
-            if self.data['func'] == other.data['func']:
+            if self.data['func'] == other.data['func'] and self.data['pow'] == other.data['pow']:
                 self.data['const'] += other.data['const']
                 return self
 
-            elif self.data['pow'] == 1 and  self.data['func'][0] == 'sum':
-                for i in range(1, len(self.data['func'])):
-                    if not isinstance(self.data['func'][i], Equation): continue
-                    if self.data['func'][i].data['func'] == other.data['func'] and self.data['func'][i].data['pow'] == other.data['pow']:
-                        self.data['func'][i].data['const'] += (other.data['const']) / self.data['const']
-                        return self
+            condit1 = self.data['pow'] == 1 and  self.data['func'][0] == 'sum'
+            condit2 = other.data['pow'] == 1 and  other.data['func'][0] == 'sum'
 
-                other.data['const'] /= self.data['const']
-                self.data['func'].append(other)
+            def append_to_sum(eq1:Equation, eq2:Union[int, float, Equation]):
+                func = eq1.data['func']
+                for i in range(1, len(eq1.data['func'])):
+                    if type(eq2) != type(func[i]): continue
+                    if isinstance(func[i], Union[int, float]) and isinstance(eq2, Union[int, float]):
+                        func[i] += eq2
+                        return eq1
+                    if not isinstance(eq2, Equation): continue
+                    if func[i].data['func'] == eq2.data['func'] and func[i].data['pow'] == eq2.data['pow']:
+                        func[i].data['const'] += (eq2.data['const']) / eq1.data['const']
+                        return eq1
+
+                eq2.data['const'] /= eq1.data['const']
+                eq1.data['func'].append(eq2)
+                return eq1
+                
+            if condit1 and not condit2:
+                return append_to_sum(self, other)
+            elif condit2 and not condit1:
+                return append_to_sum(other, self)
+            elif condit1 and condit2:
+                for eq in other.data['func'][1:]:
+                    self = append_to_sum(self, eq)
                 return self
 
             return Equation(1, ['sum', self, other], 1)
@@ -64,6 +84,9 @@ class Equation():
     def __mul__(self, other:Union[int, Equation]):
         self.print_step('__mul__', other)
 
+        if isinstance(other, x):
+            other = other * 1
+
         if isinstance(other, Union[int, float]):
             self.data['const'] *= other
             return self
@@ -73,6 +96,9 @@ class Equation():
                 self.data['const'] *= other.data['const']
                 self.data['pow'] += other.data['pow']
                 return self
+
+            elif self.data['func'] == '':
+                ...
 
             elif self.data['func'][0] == 'mul':
                 for i in range(1, len(self.data['func'])):
@@ -87,26 +113,7 @@ class Equation():
                 self.data['func'].append(other)
                 return self
 
-            # elif self.data[pow] == 1 and self.data['func'][0] == 'div':
-            #     eq:Union[int, Equation] = self.data['func'][1].data
-
-            #     if isinstance(eq['func'], list):
-            #         if eq['func'][0] == 'mul':
-            #             for i in range(1, len(self.data['func'])):
-            #                 if not isinstance(self.data['func'][i], Equation): continue
-
-            #                 if self.data['func'][i].data['func'] == other.data['func']:
-            #                     self.data['const'] *= other.data['const'] / self.data['const']
-            #                     self.data['pow'] += other.data['pow'] / self.data['pow']
-            #                     return self
-                                
-            #             other.data['const'] /= self.data['const']
-            #             other.data['pow'] /= self.data['pow']
-            #             eq['func'].append(other)
-            #             return self
-
-            self.data['func'][1] = Equation(1, ['mul', self.data['func'][1], ], 1)
-            return self
+            return Equation(1, ['mul', self, other], 1)
 
         raise Exception(f'Incorrect type of {other}: {type(other)}. It can be {int} or {self}')
 
@@ -204,30 +211,50 @@ class Equation():
 
 
     def print_step(self, func, other):
-        # if isinstance(other, Equation):
-        #     print(f"{func}:\n   self: {self.to_string()}\n   other: {other.to_string()}\n")
-        # if isinstance(other, int):
-        #     print(f"{func}:\n   self: {self.to_string()}\n   other: {other}\n")
-        ...
+        if isinstance(other, Equation):
+            print(f"{func}:\n   self: {self.to_string()}\n   other: {other.to_string()}\n")
+        if isinstance(other, int):
+            print(f"{func}:\n   self: {self.to_string()}\n   other: {other}\n")
 
 
-
-def x()-> Equation: 
+class x(): 
     '''
-    Function for creating a variable x.
-    It is forbidden to call 1 time and use several times.\n
-    You need to write it as:
-          from diffpy import x\n
-          equation = x() + x()\n
-
-    The following code will execute incorrectly:
-          from diffpy import x\n
-          equation = x + x, 
-    or  
-          import diffpy as df\n
-          x = df.x()\n
-          equation = x + x\n
+    Class for creating a variable x
     '''
 
+    def __init__(self) -> None:
+        self.data = {
+            'const': 1, 
+            'func': 'x', 
+            'pow': 1
+        }
 
-    return Equation(1, 'x', 1)
+    def __add__(self, other:Union[int, Equation]):
+        return Equation(1, 'x', 1) + other
+
+    def __radd__(self, other:Union[int, Equation]):
+        return other + Equation(1, 'x', 1)
+
+    def __sub__(self, other:Union[int, Equation]):
+        return Equation(1, 'x', 1) - other
+
+    def __rsub__(self, other:Union[int, Equation]):
+        return other - Equation(1, 'x', 1)
+
+    def __mul__(self, other:Union[int, Equation]):
+        return Equation(1, 'x', 1) * other
+
+    def __rmul__(self, other:Union[int, Equation]): 
+        return other * Equation(1, 'x', 1)
+
+    def __truediv__(self, other:Union[int, Equation]):
+        return Equation(1, 'x', 1) / other
+
+    def __rtruediv__(self, other:Union[int, Equation]):
+        return other / Equation(1, 'x', 1)
+
+    def __pow__(self, other:Union[int, Equation]):
+        return Equation(1, 'x', 1) ** other
+
+    def __rpow__(self, other:Union[int, Equation]):
+        return other ** Equation(1, 'x', 1) 
