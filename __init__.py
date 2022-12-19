@@ -21,7 +21,7 @@ from .derivative import (differentiate)
 
 from .integral import (integrate)
 
-from .constants import (e)
+from .constants import (e, pi)
 
 
 
@@ -39,5 +39,5 @@ __all__ = [
     'differentiate',
 
     # diffpy.constants
-    'e'
+    'e', 'pi'
 ]

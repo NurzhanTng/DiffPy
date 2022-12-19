@@ -2,8 +2,6 @@ from __future__ import annotations
 from typing import Union
 
 from diffpy.constants import e
-from Variable import x
-
 
 
 class Equation():
@@ -17,9 +15,7 @@ class Equation():
 
     def __add__(self, other:Union[int, float, Equation]):
         self.print_step('__add__', other)
-        
-        if isinstance(other, x):
-            other = other * 1
+        other = other * 1
 
         if isinstance(other, Union[int, float]):
             if self.data['pow'] == 1 and  self.data['func'][0] == 'sum':
@@ -88,9 +84,7 @@ class Equation():
 
     def __mul__(self, other:Union[int, Equation]):
         self.print_step('__mul__', other)
-
-        if isinstance(other, x):
-            other = other * 1
+        other = other * 1
 
         if isinstance(other, Union[int, float]):
             self.data['const'] *= other
@@ -193,7 +187,6 @@ class Equation():
                 elif isinstance(data, Equation):
                     string += return_equation(data, tab + 1) + '\n'
                 else:
-                    # print(f"Return_equaiton: {key} | {data}")
                     string += tabs(tab + 1) + f'{key}: {data},\n'
             return tabs(tab) + '{\n' + string + tabs(tab) + '}'
 

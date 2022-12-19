@@ -1,5 +1,7 @@
-from Equation import Equation
+from __future__ import annotations
 from typing import Union
+
+from diffpy.equation.Equation import Equation
 
 
 class Variable(): 

@@ -11,19 +11,19 @@ def undetermined_coefficient(a, b, c, eq:Equation):
 
     if eq.data['func'][0]=="sum":
         if eq.data['func'][1].data['func']=='x':
-            res=x_und_coeff(a,b,c,eq)
+            res = x_und_coeff(a, b, c, eq)
         # if eq.data['func'][1].data['func'] in ['sin','cos']:
-        #     res=sin_und_coeff(eq)
+        #     res = sin_und_coeff(eq)
         return res
     
-    # if eq.data['func'][0]=='mul':
-    #     return e_und_coeff(l,q)
+    # if eq.data['func'][0] == 'mul':
+    #     return e_und_coeff(l, q)
 
 
 def x_und_coeff(a, b, c, eq):
-    y= 1 + x + x**2
-    y1=differentiate(y)
-    y2=differentiate(y1)
+    y = 1 + x + x**2
+    y1 = differentiate(y)
+    y2 = differentiate(y1)
 
     y *= a
     y1 *= b
