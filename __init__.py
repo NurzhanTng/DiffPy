@@ -13,15 +13,31 @@ Contact us for more information:
 
 """
 
-from .equation import (Equation, x)
+from .equation import (Equation, Variable, Sin, Cos, Tan, Cot)
 
-from .diffmath import (Sin, Cos, Tg, Ctg)
+from .diffmath import (homogeneous, variation)
+
+from .derivative import (differentiate)
+
+from .integral import (integrate)
+
+from .constants import (e)
+
 
 
 __all__ = [
     # diffpy.equation
-    'Equation', 'x'
+    'Equation', 'Variable', 'Sin', 'Cos', 'Tan', 'Cot',
 
     # diffpy.diffmath
-    'Sin', 'Cos', 'Tg', 'Ctg'
+    'homogeneous', 'variation',
+    
+    # diffpy.integral.integrate
+    'integrate',
+    
+    # diffpy.integral.integrate
+    'differentiate',
+
+    # diffpy.constants
+    'e'
 ]

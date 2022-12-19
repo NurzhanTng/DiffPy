@@ -1,6 +1,11 @@
 from __future__ import annotations
 from typing import Union
 
+from diffpy.constants import e
+from Variable import x
+
+
+
 class Equation():
     def __init__(self, const:int, func:Union[str, list[str, Equation]], power:Union[int, Equation]) -> None:
         self.data = {
@@ -104,9 +109,16 @@ class Equation():
                 for i in range(1, len(self.data['func'])):
                     if not isinstance(self.data['func'][i], Equation): continue
 
-                    if self.data['func'][i].data['func'] == other.data['func']:
-                        self.data['const'] *= other.data['const'] / self.data['const']
-                        self.data['pow'] += other.data['pow'] / self.data['pow']
+                    el:Equation = self.data['func'][i]
+                    is_func_equal = el.data['func'] == other.data['func']
+                    is_const_equal = el.data['const'] == other.data['const']
+
+                    if (is_func_equal and other.data['func'] == '') and is_const_equal:
+                        el.data['pow'] = el.data['pow'] + other.data['pow']
+                        return self
+                    elif is_func_equal:
+                        el.data['const'] *= other.data['const'] / self.data['const']
+                        el.data['pow'] += other.data['pow'] / self.data['pow']
                         return self
 
                 other.data['const'] /= self.data['const']
@@ -127,14 +139,15 @@ class Equation():
         self.print_step('__div__', other)
         if isinstance(other, Equation):
             other.data['pow'] *= -1
-            other.data['const'] = 1 / other.data['const']
+            if other.data['func'] != '':
+                other.data['const'] = 1 / other.data['const']
         else:
             other = 1 / other
         return self.__mul__(other)
     
 
     def __rtruediv__(self, other:Union[int, Equation]):
-        self.print_step('__div__', other)
+        self.print_step('__rdiv__', other)
         self.data['pow'] *= -1
         other.data['const'] = 1 / other.data['const']
         return self.__mul__(other)
@@ -175,9 +188,12 @@ class Equation():
                 data = eq.data[key]
                 if isinstance(data, list):
                     string += tabs(tab + 1) + f'{key}: {return_list(data, tab + 1)},\n'
+                elif isinstance(data, Equation) and key == 'pow':
+                    string += tabs(tab + 1) + f'{key}: {return_equation(data, tab + 1)[2*(tab+1):]},\n'
                 elif isinstance(data, Equation):
                     string += return_equation(data, tab + 1) + '\n'
                 else:
+                    # print(f"Return_equaiton: {key} | {data}")
                     string += tabs(tab + 1) + f'{key}: {data},\n'
             return tabs(tab) + '{\n' + string + tabs(tab) + '}'
 
@@ -188,7 +204,12 @@ class Equation():
 
     def to_string(self):
         const, func, power = self.data.values()
-        string = str(const) + '*' if const != 1 else ''
+        
+        string = ''
+        if int(const / e) == const / e:
+            string += f'{int(const / e) if int(const / e) != 1 else ""}e{"" if func == "" else "*"}'
+        elif const != 1:
+            string += str(const) + '*'
 
         if func == 'x':
             string += f'x'
@@ -203,9 +224,21 @@ class Equation():
                         string += f'({el.to_string()})'
                     else:
                         string += str(el)
-                
-        if power != 1:
+            if func[0] == 'mul':
+                for i in range(1, len(func)):
+                    el = func[i]
+                    if i > 1:
+                        string += ' * '
+
+                    if isinstance(el, Equation):
+                        string += f'({el.to_string()})'
+                    else:
+                        string += str(el)
+            
+        if isinstance(power, int) and power != 1:
             string = f'{string}^{power}'
+        if isinstance(power, Equation):
+            string = f'{string}^({power.to_string()})'
 
         return string
 
@@ -217,44 +250,34 @@ class Equation():
             print(f"{func}:\n   self: {self.to_string()}\n   other: {other}\n")
 
 
-class x(): 
-    '''
-    Class for creating a variable x
-    '''
+    def simplify(self:Equation):
+        self._is_changed = False
 
-    def __init__(self) -> None:
-        self.data = {
-            'const': 1, 
-            'func': 'x', 
-            'pow': 1
-        }
+        # if self.data['const'] == 0:
+        #     self._is_changed = True
+        #     return self := 0
+        
+        # if self.data['pow'] == 0:
+        #     self._is_changed = True
+        #     return self := 1
 
-    def __add__(self, other:Union[int, Equation]):
-        return Equation(1, 'x', 1) + other
+        # if isinstance(self.data['func'], list):
+        #     if self.data['func'][0] == 'mul':
+        #         for i in range(1, len(self.data['func'])):
+        #             el:Equation = self.data['func'][i]
 
-    def __radd__(self, other:Union[int, Equation]):
-        return other + Equation(1, 'x', 1)
+        #             if el == 0:
+        #                 self._is_changed = True
+        #                 self = 0
+        #                 break
 
-    def __sub__(self, other:Union[int, Equation]):
-        return Equation(1, 'x', 1) - other
+        #             if isinstance(el, Union[int, float]):
+        #                 self._is_changed = True
+        #                 self.data['const'] *= el
 
-    def __rsub__(self, other:Union[int, Equation]):
-        return other - Equation(1, 'x', 1)
+        #             elif isinstance(el, Equation):
+        #                 el.simplify()
+                    
 
-    def __mul__(self, other:Union[int, Equation]):
-        return Equation(1, 'x', 1) * other
+        return self.simplify() if self._is_changed and isinstance(self, Equation) else self 
 
-    def __rmul__(self, other:Union[int, Equation]): 
-        return other * Equation(1, 'x', 1)
-
-    def __truediv__(self, other:Union[int, Equation]):
-        return Equation(1, 'x', 1) / other
-
-    def __rtruediv__(self, other:Union[int, Equation]):
-        return other / Equation(1, 'x', 1)
-
-    def __pow__(self, other:Union[int, Equation]):
-        return Equation(1, 'x', 1) ** other
-
-    def __rpow__(self, other:Union[int, Equation]):
-        return other ** Equation(1, 'x', 1) 
