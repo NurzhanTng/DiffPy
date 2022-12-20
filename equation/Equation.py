@@ -161,6 +161,51 @@ class Equation():
         return Equation(other, '', self)
 
 
+    def __str__(self):
+        const, func, power = self.data.values()
+        
+        string = ''
+        if int(const / e) == const / e:
+            string += f'{int(const / e) if int(const / e) != 1 else ""}e{"" if func == "" else "*"}'
+        elif const != 1:
+            string += str(const) + '*'
+
+        if func == 'x':
+            string += f'x'
+        elif isinstance(func, list):
+            if func[0] == 'sum':
+                string += '('
+                for i in range(1, len(func)):
+                    el = func[i]
+                    if i > 1:
+                        string += ' + '
+
+                    if isinstance(el, Equation):
+                        string += f'{el.__str__()}'
+                    else:
+                        string += str(el)
+                string += ')'
+            if func[0] == 'mul':
+                string += '('
+                for i in range(1, len(func)):
+                    el = func[i]
+                    if i > 1:
+                        string += ' * '
+
+                    if isinstance(el, Equation):
+                        string += f'{el.__str__()}'
+                    else:
+                        string += str(el)
+                string += ')'
+            
+        if isinstance(power, int) and power != 1:
+            string = f'{string}^{power}'
+        if isinstance(power, Equation):
+            string = f'{string}^({power.__str__()})'
+
+        return string[:len(string)]
+
+
     def show_data(self, func=None):
         def tabs(tab):
             return ' ' * (tab * 2)
@@ -196,51 +241,15 @@ class Equation():
 
 
     def to_string(self):
-        const, func, power = self.data.values()
-        
-        string = ''
-        if int(const / e) == const / e:
-            string += f'{int(const / e) if int(const / e) != 1 else ""}e{"" if func == "" else "*"}'
-        elif const != 1:
-            string += str(const) + '*'
-
-        if func == 'x':
-            string += f'x'
-        elif isinstance(func, list):
-            if func[0] == 'sum':
-                for i in range(1, len(func)):
-                    el = func[i]
-                    if i > 1:
-                        string += ' + '
-
-                    if isinstance(el, Equation):
-                        string += f'({el.to_string()})'
-                    else:
-                        string += str(el)
-            if func[0] == 'mul':
-                for i in range(1, len(func)):
-                    el = func[i]
-                    if i > 1:
-                        string += ' * '
-
-                    if isinstance(el, Equation):
-                        string += f'({el.to_string()})'
-                    else:
-                        string += str(el)
-            
-        if isinstance(power, int) and power != 1:
-            string = f'{string}^{power}'
-        if isinstance(power, Equation):
-            string = f'{string}^({power.to_string()})'
-
-        return string
+        return self.__str__()
 
 
     def print_step(self, func, other):
-        if isinstance(other, Equation):
-            print(f"{func}:\n   self: {self.to_string()}\n   other: {other.to_string()}\n")
-        if isinstance(other, int):
-            print(f"{func}:\n   self: {self.to_string()}\n   other: {other}\n")
+        # if isinstance(other, Equation):
+        #     print(f"{func}:\n   self: {self.to_string()}\n   other: {other.to_string()}\n")
+        # if isinstance(other, int):
+        #     print(f"{func}:\n   self: {self.to_string()}\n   other: {other}\n")
+        ...
 
 
     def simplify(self:Equation):
