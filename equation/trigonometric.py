@@ -37,7 +37,7 @@ def Tan(eq):
     if isinstance(eq, Variable):
         eq = eq * 1
 
-    return Equation(1, ['tg', eq], 1)
+    return Equation(1, ['tan', eq], 1)
 
 
 
@@ -50,4 +50,4 @@ def Cot(eq):
     if isinstance(eq, Variable):
         eq = eq * 1
     
-    return Equation(1, ['ctg', eq], 1)
+    return Equation(1, ['cot', eq], 1)

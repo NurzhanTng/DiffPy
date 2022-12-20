@@ -171,9 +171,12 @@ class Equation():
             string += str(const) + '*'
 
         if func == 'x':
-            string += f'x'
+            string += 'x'
         elif isinstance(func, list):
-            if func[0] == 'sum':
+            if func[0] in ['sin', 'cos', 'tan', 'cot']:
+                string += f"{func[0]}{func[1].__str__() if isinstance(func[1], Equation) else str(func[1])}"
+
+            elif func[0] == 'sum':
                 string += '('
                 for i in range(1, len(func)):
                     el = func[i]
@@ -185,7 +188,8 @@ class Equation():
                     else:
                         string += str(el)
                 string += ')'
-            if func[0] == 'mul':
+
+            elif func[0] == 'mul':
                 string += '('
                 for i in range(1, len(func)):
                     el = func[i]
@@ -245,10 +249,10 @@ class Equation():
 
 
     def print_step(self, func, other):
-        # if isinstance(other, Equation):
-        #     print(f"{func}:\n   self: {self.to_string()}\n   other: {other.to_string()}\n")
-        # if isinstance(other, int):
-        #     print(f"{func}:\n   self: {self.to_string()}\n   other: {other}\n")
+        if isinstance(other, Equation):
+            print(f"{func}:\n   self: {self.to_string()}\n   other: {other.to_string()}\n")
+        if isinstance(other, int):
+            print(f"{func}:\n   self: {self.to_string()}\n   other: {other}\n")
         ...
 
 
