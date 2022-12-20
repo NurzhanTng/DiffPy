@@ -174,7 +174,7 @@ class Equation():
             string += 'x'
         elif isinstance(func, list):
             if func[0] in ['sin', 'cos', 'tan', 'cot']:
-                string += f"{func[0]}{func[1].__str__() if isinstance(func[1], Equation) else str(func[1])}"
+                string += f"{func[0]}{str(func[1])}"
 
             elif func[0] == 'sum':
                 string += '('
@@ -182,30 +182,21 @@ class Equation():
                     el = func[i]
                     if i > 1:
                         string += ' + '
-
-                    if isinstance(el, Equation):
-                        string += f'{el.__str__()}'
-                    else:
-                        string += str(el)
+                    string += str(el)
                 string += ')'
 
             elif func[0] == 'mul':
-                string += '('
                 for i in range(1, len(func)):
                     el = func[i]
                     if i > 1:
                         string += ' * '
 
-                    if isinstance(el, Equation):
-                        string += f'{el.__str__()}'
-                    else:
-                        string += str(el)
-                string += ')'
+                    string += str(el)
             
-        if isinstance(power, int) and power != 1:
+        if isinstance(power, Union[int, float]) and power != 1:
             string = f'{string}^{power}'
-        if isinstance(power, Equation):
-            string = f'{string}^({power.__str__()})'
+        elif isinstance(power, Equation):
+            string = f'{string}^({power})'
 
         return string[:len(string)]
 
@@ -245,14 +236,14 @@ class Equation():
 
 
     def to_string(self):
-        return self.__str__()
+        return self.__str__()[1:-1]
 
 
     def print_step(self, func, other):
-        if isinstance(other, Equation):
-            print(f"{func}:\n   self: {self.to_string()}\n   other: {other.to_string()}\n")
-        if isinstance(other, int):
-            print(f"{func}:\n   self: {self.to_string()}\n   other: {other}\n")
+        # if isinstance(other, Equation):
+        #     print(f"{func}:\n   self: {self.to_string()}\n   other: {other.to_string()}\n")
+        # if isinstance(other, int):
+        #     print(f"{func}:\n   self: {self.to_string()}\n   other: {other}\n")
         ...
 
 
