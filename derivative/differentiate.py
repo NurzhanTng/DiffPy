@@ -7,6 +7,9 @@ from diffpy.equation.trigonometric import (Sin, Cos, Tan, Cot)
 
 
 def differentiate(eq:Union[int, float, Equation]):
+    if isinstance(eq, Equation):
+        eq = eq.copy()
+
     if isinstance(eq, Union[int, float]):
         return 0
     if not isinstance(eq, Equation):
@@ -22,7 +25,7 @@ def differentiate(eq:Union[int, float, Equation]):
     
     elif isinstance(eq.data['func'], list):
         if eq.data['func'][0] in ['sin', 'cos', 'tan', 'cot']:
-            res = _diff_trigonometry(eq, eq[0])
+            res = _diff_trigonometry(eq)
     
         elif eq.data['func'][0] == 'sum':
             res = _diff_sum(eq)
@@ -115,12 +118,15 @@ def _diff_cot(const, power, arg):
 
 
 def _diff_sum(eq:Equation):
+    eq = eq.copy()
+
     const:Union[int, float] = eq.data['const']
     func:Union[str, list[str, Equation]] = eq.data['func']
     power:Union[int, Equation] = eq.data['pow']
 
+
     if power != 1:
-        return Exception(f"I can't solve this equation {eq}")
+        return (differentiate(Equation(1, func, 1).copy()) * Equation(1, func, power-1)) * (const * power)
     
     equations = func[2:]
     res = differentiate(func[1])

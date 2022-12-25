@@ -236,7 +236,7 @@ class Equation():
 
 
     def to_string(self):
-        return self.__str__()[1:-1]
+        return self.__str__()[1:-1] if self.data['const'] == 1 and self.data['pow'] == 1 else self.__str__()
 
 
     def print_step(self, func, other):
@@ -277,4 +277,30 @@ class Equation():
                     
 
         return self.simplify() if self._is_changed and isinstance(self, Equation) else self 
+
+
+    def copy(eq:Equation):
+        const:Union[int, float] = eq.data['const']
+        func:Union[str, list[str, Equation]] = eq.data['func']
+        power:Union[int, Equation] = eq.data['pow']
+
+        def copy_power(eq:Union[int, float, Equation]):
+            if isinstance(eq, Equation):
+                return eq.copy()
+            return eq
+            
+        if func == 'x':
+            return Equation(const, 'x', copy_power(power))
+        
+        if isinstance(func, list):
+            arr = []
+            arr.append(func[0])
+
+            for el in func[1:]:
+                arr.append(el.copy() if isinstance(el, Equation) else el)
+            
+            return Equation(const, arr, copy_power(power))
+
+        raise Exception(f"I can't copy this equation: {eq}")
+
 
