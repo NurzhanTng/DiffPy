@@ -7,6 +7,10 @@ from diffpy.equation.Variable import Variable
 
 
 def Sin(eq):
+    """
+
+    """
+
     if isinstance(eq, Union[int, float]):
         return sin(eq)
 
@@ -18,6 +22,10 @@ def Sin(eq):
 
 
 def Cos(eq):
+    """
+
+    """
+
     if isinstance(eq, Union[int, float]):
         return cos(eq)
 
@@ -29,6 +37,10 @@ def Cos(eq):
 
 
 def Tan(eq):
+    """
+
+    """
+
     if isinstance(eq, Union[int, float]):
         if cos(eq) == 0:
             return 0
@@ -42,6 +54,10 @@ def Tan(eq):
 
 
 def Cot(eq):
+    """
+
+    """
+    
     if isinstance(eq, Union[int, float]):
         if sin(eq) == 0:
             return 0

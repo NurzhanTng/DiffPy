@@ -6,6 +6,10 @@ from diffpy.equation.Equation import Equation
 
 
 def variation(a, b, c, eq:Equation):
+    """
+
+    """
+    
     try:
         return _variation(a, b, c, eq)
     except Exception as e:

@@ -7,6 +7,10 @@ from diffpy.equation.trigonometric import (Sin, Cos, Tan, Cot)
 
 
 def integrate(eq:Union[int, float, Equation]):
+    """
+
+    """
+
     if isinstance(eq, Equation):
         eq = eq.copy()
 

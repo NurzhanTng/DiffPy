@@ -5,6 +5,10 @@ from diffpy.constants import e
 
 
 class Equation():
+    """
+
+    """
+
     def __init__(self, const:int, func:Union[str, list[str, Equation]], power:Union[int, Equation]) -> None:
         self.data = {
             'const': const, 

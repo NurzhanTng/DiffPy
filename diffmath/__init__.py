@@ -4,6 +4,8 @@ from .variation import variation
 
 from .undetermined_coefficient import undetermined_coefficient
 
+from .first_order import first_order
+
 
 __all__ = [
     # diffpy.diffmath.homogeneous
@@ -14,4 +16,7 @@ __all__ = [
 
     # diffpy.diffmath.undetermined_coefficient
     'undetermined_coefficient',
+
+    # diffpy.diffmath.first_order
+    'first_order',
 ]

@@ -7,6 +7,10 @@ from diffpy.constants import e
 
 
 def homogeneous(a:Union[int, float], b:Union[int, float], c:Union[int, float]):
+    """
+
+    """
+    
     x = Variable()
     D = b**2 - 4*a*c
 
