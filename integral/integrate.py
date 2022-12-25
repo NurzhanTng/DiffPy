@@ -11,7 +11,7 @@ def integrate(eq:Union[int, float, Equation]):
         eq = eq.copy()
 
     if isinstance(eq, Union[int, float]):
-        return 0
+        return Equation(eq, 'x', 1)
     if not isinstance(eq, Equation):
         raise Exception(f'Equation is not class int, float or Equation types: Equation = {eq} ({type(eq)})')
     
@@ -96,29 +96,23 @@ def _integ_trigonometry(eq:Equation):
 
 def _integ_sin(const, power, arg):
     if power == 1:
-        return (integrate(arg) * Cos(arg)) * const
+        if arg.data['func'] == 'x' and  arg.data['pow'] == 1:
+            return Cos(arg) * const
     else:
         return Exception(f"I can't solve this equation: {Equation(const, ['sin', arg], power)}")
 
-def _integ_cos(const, power, arg):
+def _integ_cos(const, power, arg:Equation):
     if power == 1:
-        return (integrate(arg) * Sin(arg)) * (-1 * const)
+        if arg.data['func'] == 'x' and  arg.data['pow'] == 1:
+            return Sin(arg) * const
     else:
         return Exception(f"I can't solve this equation: {Equation(const, ['sin', arg], power)}")
 
 def _integ_tan(const, power, arg):
     return Exception(f"I can't solve this equation: {Equation(const, ['sin', arg], power)}")
-    if power == 1:
-        return (integrate(arg) * Cos(arg)**-2) * const
-    else:
-        return (integrate(arg) * Cos(arg)**-2 * Tan(arg)**(power-1)) * const
 
 def _integ_cot(const, power, arg):
     return Exception(f"I can't solve this equation: {Equation(const, ['sin', arg], power)}")
-    if power == 1:
-        return (integrate(arg) * Cos(arg)**-2) * (-1 * const)
-    else:
-        return (integrate(arg) * Cos(arg)**-2 * Cot(arg)**(power-1)) * (-1 * const)
 
 
 
