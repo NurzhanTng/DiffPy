@@ -94,6 +94,10 @@ class Equation():
             if self.data['func'] == other.data['func']:
                 self.data['const'] *= other.data['const']
                 self.data['pow'] += other.data['pow']
+
+                if self.data['pow'] == 0:
+                    return self.data['const']
+
                 return self
 
             elif self.data['func'] == '':
