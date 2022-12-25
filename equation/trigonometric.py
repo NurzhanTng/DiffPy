@@ -1,6 +1,6 @@
 from typing import Union
 
-from diffpy.constants import (sin, cos, tan, cot)
+from diffpy.constants import (sin, cos, tan, cot, log)
 from diffpy.equation.Equation import Equation
 from diffpy.equation.Variable import Variable
 

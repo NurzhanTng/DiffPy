@@ -66,9 +66,9 @@ def _integ_exponent(eq:Equation):
     res = Exception(f"I can't solve this equation {eq}")
 
     if int(const / e) == const / e:
-        res = integrate(power) *  eq
+        res = integrate(power) / eq
     else:
-        res = integrate(power) * eq * log(const)
+        res = integrate(power) / (eq * log(const))
 
     eq.print_step('_integ_exponent', res)
     return res
