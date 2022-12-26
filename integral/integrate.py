@@ -1,6 +1,8 @@
 from typing import Union
 
 from diffpy.equation.Equation import Equation
+from diffpy.equation.Variable import Variable
+from diffpy.derivative.differentiate import differentiate
 from diffpy.constants import (e, log)
 from diffpy.equation.trigonometric import (Sin, Cos, Tan, Cot, Log)
 
@@ -12,6 +14,9 @@ def integrate(eq:Union[int, float, Equation]):
 
     if isinstance(eq, Equation):
         eq = eq.copy()
+
+    if isinstance(eq, Variable):
+        eq = eq * 1
 
     if isinstance(eq, Union[int, float]):
         return Equation(eq, 'x', 1)
@@ -103,14 +108,14 @@ def _integ_trigonometry(eq:Equation):
 def _integ_sin(const, power, arg):
     if power == 1:
         if arg.data['func'] == 'x' and  arg.data['pow'] == 1:
-            return Cos(arg) * const
+            return Cos(arg) * (-1 * const / differentiate(arg))
     else:
         return Exception(f"I can't solve this equation: {Equation(const, ['sin', arg], power)}")
 
 def _integ_cos(const, power, arg:Equation):
     if power == 1:
         if arg.data['func'] == 'x' and  arg.data['pow'] == 1:
-            return Sin(arg) * const
+            return Sin(arg) * (const / differentiate(arg))
     else:
         return Exception(f"I can't solve this equation: {Equation(const, ['sin', arg], power)}")
 

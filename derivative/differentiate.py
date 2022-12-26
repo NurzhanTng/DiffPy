@@ -128,8 +128,6 @@ def _diff_sum(eq:Equation):
     func:Union[str, list[str, Equation]] = eq.data['func']
     power:Union[int, Equation] = eq.data['pow']
 
-
-    
     equations = func[2:]
     res = differentiate(func[1])
     for equation in equations:

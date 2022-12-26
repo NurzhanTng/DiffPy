@@ -5,8 +5,17 @@ from diffpy.equation.Equation import Equation
 
 
 class Variable(): 
-    '''
+    r'''
     Class for creating a variable x
+    ===============================
+    
+    Example of using Variable:
+    
+    >>> from diffpy import Variable
+    >>> x = Variable()
+    <class Variable>
+    >>> eq = 5*x + 10
+    <class Equation>
     '''
 
     def __init__(self) -> None:

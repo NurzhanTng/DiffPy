@@ -5,8 +5,19 @@ from diffpy.constants import e
 
 
 class Equation():
-    """
+    r"""
+    # The Equation class is designed to work with any equations from the user
 
+    `We do not recommend using this class` when working with the library, 
+    because it can lead to unexpected errors. It is better to call 
+    the class `Variable`, `Sin`, `Cos`, `Log`, and so on.
+
+    The Equation class is essentially a `new data type`, because 
+    it can be added, multiplied, divided, raised to a power like other data types. 
+    To implement this, the built-in methods `__add__`, `__mul__`, etc. were used.
+
+    Also, the Equation class presents several methods for convenient work 
+    with it, such as `__str__`, `show_data`, `copy`
     """
 
     def __init__(self, const:int, func:Union[str, list[str, Equation]], power:Union[int, Equation]) -> None:
@@ -96,8 +107,10 @@ class Equation():
 
         if isinstance(other, Equation):
             if self.data['func'] == other.data['func']:
-                self.data['const'] *= other.data['const']
                 self.data['pow'] += other.data['pow']
+
+                if other.data['func'] != '':
+                    self.data['const'] *= other.data['const']
 
                 if self.data['pow'] == 0:
                     return self.data['const']
@@ -127,9 +140,14 @@ class Equation():
                 self.data['func'].append(other)
                 return self
 
+            # elif self.data['func'][0] == 'sum':
+            #     for i in range(1, len(self.data['func'])):
+            #         self.data['func'][i] *= other
+            #     return self
+
             return Equation(1, ['mul', self, other], 1)
 
-        raise Exception(f'Incorrect type of {other}: {type(other)}. It can be {int} or {self}')
+        raise Exception(f'Incorrect type of {other}: {type(other)}. It can be {int} or {Equation}')
 
 
     def __rmul__(self, other:Union[int, Equation]): 
@@ -247,7 +265,8 @@ class Equation():
 
 
     def to_string(self):
-        return self.__str__()[1:-1] if self.data['const'] == 1 and self.data['pow'] == 1 else self.__str__()
+        # return self.__str__()[1:-1] if self.data['const'] == 1 and self.data['pow'] == 1 else self.__str__()
+        return self.__str__()
 
 
     def print_step(self, func, other):
@@ -315,3 +334,27 @@ class Equation():
         raise Exception(f"I can't copy this equation: {eq}")
 
 
+    def to_dictionary(self):
+        const = self.data['const']
+        func = self.data['func']
+        power = self.data['pow']
+
+        if isinstance(func, list):
+            arr = []
+            for el in func:
+                if isinstance(el, Equation):
+                    arr.append(el.to_dictionary())
+                else:
+                    arr.append(el)
+
+            return {
+                'const': const,
+                'func': arr,
+                'pow': power
+            }
+        
+        return {
+            'const': const,
+            'func': func,
+            'pow': power
+        }

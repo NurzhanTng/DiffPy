@@ -133,8 +133,6 @@ def sin_cos__und_coeff (a, b, c, eq, isMain=True, y=None, y1=None, y2=None):
     e = get_sin(y1)[0]
     f = get_cos(y)[0] + get_cos(y2)[0]
 
-    print(f"""y: {y}\ny': {y1}\ny": {y2}\nc: {c}\nd: {d}\ne: {e}\nf: {f}""")
-
     A = (m*e - n*f) / (e*d - f*c)
     B = (n - c*A) / e
 

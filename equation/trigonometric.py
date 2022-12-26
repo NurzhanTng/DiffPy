@@ -8,7 +8,10 @@ from diffpy.equation.Variable import Variable
 
 def Sin(eq):
     """
+    Function for creating the sin equation
 
+    >>> from diffpy import (Sin, Variable)
+    >>> eq = Sin(2 * x)
     """
 
     if isinstance(eq, Union[int, float]):
@@ -20,10 +23,12 @@ def Sin(eq):
     return Equation(1, ['sin', eq], 1)
 
 
-
 def Cos(eq):
     """
+    Function for creating the sin equation
 
+    >>> from diffpy import (Cos, Variable)
+    >>> eq = Cos(2 * x)
     """
 
     if isinstance(eq, Union[int, float]):
@@ -33,7 +38,6 @@ def Cos(eq):
         eq = eq * 1
     
     return Equation(1, ['cos', eq], 1)
-
 
 
 def Tan(eq):
@@ -52,7 +56,6 @@ def Tan(eq):
     return Equation(1, ['tan', eq], 1)
 
 
-
 def Cot(eq):
     """
 
@@ -67,7 +70,6 @@ def Cot(eq):
         eq = eq * 1
     
     return Equation(1, ['cot', eq], 1)
-
 
 
 def Log(eq, base=e):

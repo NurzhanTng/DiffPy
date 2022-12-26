@@ -8,7 +8,11 @@ from diffpy.constants import e
 
 def homogeneous(a:Union[int, float], b:Union[int, float], c:Union[int, float]):
     """
+    A function created to solve equations of type `ay" + by' + cy = 0`
 
+    `Function return 2 argument`:
+    1) String of result
+    2) Fundamental set of solutions
     """
     
     x = Variable()
