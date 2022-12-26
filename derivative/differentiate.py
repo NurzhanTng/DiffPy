@@ -129,8 +129,6 @@ def _diff_sum(eq:Equation):
     power:Union[int, Equation] = eq.data['pow']
 
 
-    if power != 1:
-        return (differentiate(Equation(1, func, 1).copy()) * Equation(1, func, power-1)) * (const * power)
     
     equations = func[2:]
     res = differentiate(func[1])

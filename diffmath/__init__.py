@@ -6,6 +6,8 @@ from .undetermined_coefficient import undetermined_coefficient
 
 from .first_order import first_order
 
+from .first_order_homogeneous import first_order_homogeneous
+
 
 __all__ = [
     # diffpy.diffmath.homogeneous
@@ -19,4 +21,7 @@ __all__ = [
 
     # diffpy.diffmath.first_order
     'first_order',
+
+    # diffpy.diffmath.first_order_homogeneous
+    'first_order_homogeneous',
 ]

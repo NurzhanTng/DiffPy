@@ -2,8 +2,7 @@ from typing import Union
 
 from diffpy.equation.Equation import Equation
 from diffpy.constants import (e, log)
-from diffpy.equation.trigonometric import (Sin, Cos, Tan, Cot)
-
+from diffpy.equation.trigonometric import (Sin, Cos, Tan, Cot, Log)
 
 
 def integrate(eq:Union[int, float, Equation]):
@@ -30,6 +29,9 @@ def integrate(eq:Union[int, float, Equation]):
     elif isinstance(eq.data['func'], list):
         if eq.data['func'][0] in ['sin', 'cos', 'tan', 'cot']:
             res = _integ_trigonometry(eq)
+
+        if eq.data['func'][0] in ['ln', 'log']:
+            res = _integ_log(eq)
     
         elif eq.data['func'][0] == 'sum':
             res = _integ_sum(eq)
@@ -57,7 +59,7 @@ def _integ_x(eq:Equation):
     if power != -1:
         res = Equation(const/(power+1), 'x', power+1)
     else:
-        return Exception(f"I doesn't created ln yet, so I can't integrate this eq: {eq}")
+        res = Log(Equation(1, 'x', 1) ** const)
 
     eq.print_step('_integ_x', res)
     return res
@@ -113,10 +115,16 @@ def _integ_cos(const, power, arg:Equation):
         return Exception(f"I can't solve this equation: {Equation(const, ['sin', arg], power)}")
 
 def _integ_tan(const, power, arg):
-    return Exception(f"I can't solve this equation: {Equation(const, ['sin', arg], power)}")
+    if power != 1 or arg.data['func'] != 'x' or arg.data['pow'] != 1:
+        return Exception(f"I can't solve this equation: {Equation(const, ['sin', arg], power)}")
+
+    return -1 * Log(Cos(Equation(1, 'x', 1)))
 
 def _integ_cot(const, power, arg):
-    return Exception(f"I can't solve this equation: {Equation(const, ['sin', arg], power)}")
+    if power != 1 or arg.data['func'] != 'x' or arg.data['pow'] != 1:
+        return Exception(f"I can't solve this equation: {Equation(const, ['sin', arg], power)}")
+
+    return Log(Sin(Equation(1, 'x', 1)))
 
 
 
@@ -141,3 +149,9 @@ def _integ_sum(eq:Equation):
 
 
 def _integ_mul(eq:Equation): return Exception(f"I can't integrate complex equation {eq}")
+
+
+
+
+def _integ_log(eq:Equation):
+    ...

@@ -15,7 +15,7 @@ Contact us for more information:
 
 from .equation import (Equation, Variable, Sin, Cos, Tan, Cot)
 
-from .diffmath import (homogeneous, variation, undetermined_coefficient, first_order)
+from .diffmath import (homogeneous, variation, undetermined_coefficient, first_order, first_order_homogeneous)
 
 from .derivative import (differentiate)
 
@@ -30,7 +30,7 @@ __all__ = [
     'Equation', 'Variable', 'Sin', 'Cos', 'Tan', 'Cot',
 
     # diffpy.diffmath
-    'homogeneous', 'variation', 'undetermined_coefficient', 'first_order',
+    'homogeneous', 'variation', 'undetermined_coefficient', 'first_order', 'first_order_homogeneous',
     
     # diffpy.integral.integrate
     'integrate',

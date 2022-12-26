@@ -1,5 +1,6 @@
 from diffpy.integral.integrate import integrate
 from diffpy.constants import e
+from diffpy.equation.Equation import Equation
 
 
 
@@ -22,16 +23,24 @@ def first_order(eq1, eq2):
     # A part  
     P = integrate(eq1)
 
-    if 'ln' in str(P):
-        v = P[2:]
+    if _isLn():
+        v = P.data['func'][1]
     else:
         v = e**(P)
 
 
     # B part
-    u = integrate(eq2 / v) # + C [constanta]
+    u = integrate(eq2 * (v ** -1)) # + C [constanta]
 
     y = u*v
     string = f'y = ({u} + C) * {v}'
 
     return string, y
+
+
+def _isLn(eq):
+    res = False
+    if isinstance(eq, Equation):
+        if isinstance(eq.data['func'], list):
+            res =  eq.data['func'][0] == 'ln' 
+    return res

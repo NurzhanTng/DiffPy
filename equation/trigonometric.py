@@ -1,6 +1,6 @@
 from typing import Union
 
-from diffpy.constants import (sin, cos, tan, cot, log)
+from diffpy.constants import (sin, cos, tan, cot, log, e)
 from diffpy.equation.Equation import Equation
 from diffpy.equation.Variable import Variable
 
@@ -67,3 +67,22 @@ def Cot(eq):
         eq = eq * 1
     
     return Equation(1, ['cot', eq], 1)
+
+
+
+def Log(eq, base=e):
+    """
+
+    """
+
+    if isinstance(eq, Union[int, float]) and isinstance(base, Union[int, float]):
+        return log(eq, base)
+
+    if isinstance(eq, Variable):
+        eq = eq * 1
+    if base == 0:
+        raise Exception("Wrong base for logarithm: 0")
+        
+    if int(base / e) == base / e:
+        return Equation(1, ['ln', eq], 1)
+    return Equation(1, ['log', eq, base], 1)

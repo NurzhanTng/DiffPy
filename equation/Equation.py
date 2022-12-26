@@ -151,7 +151,7 @@ class Equation():
     def __rtruediv__(self, other:Union[int, Equation]):
         self.print_step('__rdiv__', other)
         self.data['pow'] *= -1
-        other.data['const'] = 1 / other.data['const']
+        self.data['const'] = 1 / self.data['const']
         return self.__mul__(other)
 
 
@@ -171,6 +171,9 @@ class Equation():
 
     def __str__(self):
         const, func, power = self.data.values()
+
+        if const == 0:
+            return 0
         
         string = ''
         if int(const / e) == const / e:
@@ -297,8 +300,8 @@ class Equation():
                 return eq.copy()
             return eq
             
-        if func == 'x':
-            return Equation(const, 'x', copy_power(power))
+        if func in ['x', '']:
+            return Equation(const, func, copy_power(power))
         
         if isinstance(func, list):
             arr = []
