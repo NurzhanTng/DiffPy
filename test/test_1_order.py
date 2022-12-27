@@ -9,8 +9,8 @@ def test_1_order():
    
     eq1 = -2
     eq2 = -1 * e ** x
-    print(first_order(eq1, eq2))
+    assert first_order(eq1, eq2) == 'y = (e^(-1*x) + C) * e^(2*x)'
 
     eq1 = -3 / x
     eq2 = -1 * x
-    print(first_order(eq1, eq2)) 
+    assert first_order(eq1, eq2) == 'y = (x^-1 + C) * x^3.0'

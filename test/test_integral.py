@@ -14,6 +14,3 @@ def test_integral():
 
     print('"test_integral" is passed')
 
-
-
-

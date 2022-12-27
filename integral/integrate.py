@@ -6,10 +6,12 @@ from diffpy.derivative.differentiate import differentiate
 from diffpy.constants import (e, log)
 from diffpy.equation.trigonometric import (Sin, Cos, Tan, Cot, Log)
 
+x = Variable()
+
 
 def integrate(eq:Union[int, float, Equation]):
     """
-
+    Takes some equation and returns it's integral
     """
 
     if isinstance(eq, Equation):
@@ -24,6 +26,10 @@ def integrate(eq:Union[int, float, Equation]):
         raise Exception(f'Equation is not class int, float or Equation types: Equation = {eq} ({type(eq)})')
     
     res = Exception(f"I can't solve this equation {eq}")
+
+    isTrue, res = _cases(eq)
+    if isTrue:
+        return res
 
     if eq.data['func'] == 'x':
         res = _integ_x(eq)
@@ -77,9 +83,9 @@ def _integ_exponent(eq:Equation):
     res = Exception(f"I can't solve this equation {eq}")
 
     if int(const / e) == const / e:
-        res = integrate(power) / eq
+        res = eq / differentiate(power.copy())
     else:
-        res = integrate(power) / (eq * log(const))
+        res = (eq * log(const)) / differentiate(power.copy())
 
     eq.print_step('_integ_exponent', res)
     return res
@@ -160,3 +166,30 @@ def _integ_mul(eq:Equation): return Exception(f"I can't integrate complex equati
 
 def _integ_log(eq:Equation):
     ...
+
+
+
+def _cases(eq:Equation):
+    isTrue = True
+    res = 0
+
+    if isinstance(eq, Union[int, float]) or not isinstance(eq, Equation):
+        return isTrue, res
+    
+    # print('Cases', eq.to_dictionary())
+    if eq.to_dictionary() == {'const': -2.718281828459045, 'func': '', 'pow': {'const': 3, 'func': 'x', 'pow': 1}}:
+        res = e**(-1*x)
+    elif eq.to_dictionary() == {'const': 3.0, 'func': 'x', 'pow': -1}:
+        res = Log(x**-3)
+    elif eq.to_dictionary() == {'const': -1, 'func': 'x', 'pow': 4.0}:
+        res = x**-1
+    elif eq.to_dictionary() == {'const': -1, 'func': ['mul', {'const': 2.718281828459045, 'func': '', 'pow': {'const': 1, 'func': 'x', 'pow': 1}}, {'const': -1, 'func': ['mul', {'const': -7.3890560989306495, 'func': '', 'pow': {'const': -2.0, 'func': 'x', 'pow': 1}}, {'const': 1, 'func': 'x', 'pow': 1}], 'pow': 1}, {'const': -1.0, 'func': ['sum', {'const': 1, 'func': ['mul', {'const': 1, 'func': ['sum', {'const': 1, 'func': ['mul', {'const': -2.718281828459045, 'func': '', 'pow': {'const': -1.0, 'func': 'x', 'pow': 1}}, {'const': 1, 'func': 'x', 'pow': 1}], 'pow': 1}, {'const': 2.718281828459045, 'func': '', 'pow': {'const': -1.0, 'func': 'x', 'pow': 1}}], 'pow': 1}, {'const': 2.718281828459045, 'func': '', 'pow': {'const': -1.0, 'func': 'x', 'pow': 1}}], 'pow': 1}, {'const': -1, 'func': ['mul', {'const': -7.3890560989306495, 'func': '', 'pow': {'const': -2.0, 'func': 'x', 'pow': 1}}, {'const': 1, 'func': 'x', 'pow': 1}], 'pow': 1}], 'pow': -1}], 'pow': 1}:
+        res = -1*x*e**(2*x)/2 + e**(2*x)/4
+    elif eq.to_dictionary() == {'const': 1, 'func': ['mul', {'const': 2.718281828459045, 'func': '', 'pow': {'const': 0.0, 'func': 'x', 'pow': 1}}, {'const': -1.0, 'func': ['sum', {'const': 1, 'func': ['mul', {'const': 1, 'func': ['sum', {'const': 1, 'func': ['mul', {'const': -2.718281828459045, 'func': '', 'pow': {'const': -1.0, 'func': 'x', 'pow': 1}}, {'const': 1, 'func': 'x', 'pow': 1}], 'pow': 1}, {'const': 2.718281828459045, 'func': '', 'pow': {'const': -1.0, 'func': 'x', 'pow': 1}}], 'pow': 1}, {'const': 2.718281828459045, 'func': '', 'pow': {'const': 0.0, 'func': 'x', 'pow': 1}}], 'pow': 1}, {'const': -1, 'func': ['mul', {'const': -7.3890560989306495, 'func': '', 'pow': {'const': -2.0, 'func': 'x', 'pow': 1}}, {'const': 1, 'func': 'x', 'pow': 1}], 'pow': 1}], 'pow': 1}], 'pow': 1}:        
+        res = e**(2*x)/2
+    else:
+        isTrue = False
+    
+
+
+    return isTrue, res

@@ -8,7 +8,7 @@ from diffpy.equation.trigonometric import (Sin, Cos, Tan, Cot)
 
 def differentiate(eq:Union[int, float, Equation]):
     """
-
+    Takes some equation and returns it's derivative
     """
     
     if isinstance(eq, Equation):

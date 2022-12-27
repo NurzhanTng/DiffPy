@@ -21,6 +21,7 @@ def first_order(eq1, eq2):
     '''
 
     # A part  
+
     P = integrate(eq1)
 
     if _isLn(P):
@@ -28,11 +29,12 @@ def first_order(eq1, eq2):
     else:
         v = e**(P)
 
+    # print("V", v, eq1)
 
     # B part
     u = integrate(eq2 * (v ** -1)) # + C [constanta]
-
-    y = u*v
+    # print("U", u)
+    # print()
 
     string = f'y = ({u} + C) * {v}'
 

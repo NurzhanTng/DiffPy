@@ -48,10 +48,10 @@ def _variation(a, b, c, eq:Equation):
 
     det = (d * a) - (b * c)
 
-    v1_prime = (-1 * (eq * b)) / det
+    v1_prime = ((-1 * (eq.copy() * b)) / det)
     v1 = integrate(v1_prime)
-
-    v2_prime = (a * eq) / det 
+    
+    v2_prime = (a * eq.copy()) / det 
     v2 = integrate(v2_prime)
 
     y_part:Equation = v1 * l[0] + v2 * l[1]

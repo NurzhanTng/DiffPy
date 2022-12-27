@@ -70,8 +70,8 @@ def x_und_coeff(a, b, c, eq, isMain=True, y=None, y1=None, y2=None):
 
     if isMain:
         sign = '+'
-        if A < 0:
-            A *= -1
+        if resA < 0:
+            resA *= -1
             sign = '-'
         return f"y = {string} {sign} {resA * x ** 2 + resB * x + resC}"
     return [resA, resB, resC]

@@ -191,7 +191,7 @@ class Equation():
         const, func, power = self.data.values()
 
         if const == 0:
-            return 0
+            return '0'
         
         string = ''
         if int(const / e) == const / e:
@@ -335,6 +335,12 @@ class Equation():
 
 
     def to_dictionary(self):
+        def power_to_dict(power):
+            if isinstance(power, Equation):
+                return power.to_dictionary()
+            else:
+                return power
+
         const = self.data['const']
         func = self.data['func']
         power = self.data['pow']
@@ -350,11 +356,11 @@ class Equation():
             return {
                 'const': const,
                 'func': arr,
-                'pow': power
+                'pow': power_to_dict(power)
             }
         
         return {
             'const': const,
             'func': func,
-            'pow': power
+            'pow': power_to_dict(power)
         }
