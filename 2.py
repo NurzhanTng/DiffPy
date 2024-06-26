@@ -1,29 +1,57 @@
+from bs4 import BeautifulSoup
 import pandas as pd
-from pathlib import Path
+import os
 
-# Пути к файлам
-file_14_06 = '16.06.csv'
-file_rf = 'рф.csv'
+# Функция для обработки одного HTML файла и сохранения в Excel
+def process_html_to_excel(html_filename, output_directory):
+    if not os.path.exists(html_filename):
+        print(f"HTML файл '{html_filename}' не найден.")
+        return False
 
-# Чтение CSV файлов
-df_14_06 = pd.read_csv(file_14_06)
-df_rf = pd.read_csv(file_rf)
+    with open(html_filename, 'r', encoding='utf-8') as file:
+        html_content = file.read()
 
-# Извлечение даты из имени файла 14.06.csv
-file_date = Path(file_14_06).stem  # Это даст нам '14.06'
+    # Парсим HTML контент
+    soup = BeautifulSoup(html_content, 'html.parser')
+    feedback_items = soup.find_all('div', class_='feedbacks-item-product')
 
-# Объединение данных по столбцу 'Col0' и 'Филиал'
-merged_df = pd.merge(df_14_06, df_rf, left_on='Col0', right_on='Филиал', how='inner')
+    feedbacks = []
 
-# Добавляем столбец с датой
-merged_df['Дата'] = file_date
+    for item in feedback_items:
+        stars = len(item.find_all('svg', class_='icon-star'))
+        date = item.find('span', {'data-tag': 'date'}).text.strip()
+        text = item.find('span', {'data-tag': 'text'}).text.strip()
+        
+        feedbacks.append({
+            'stars': stars,
+            'date': date,
+            'text': text
+        })
 
- #Переупорядочиваем столбцы и переименовываем 'Col5' в 'Рейтинг'
-merged_df = merged_df[['Дата', 'Филиал', 'Рф', 'Col5']]
-merged_df.rename(columns={ 'Col5': 'Рейтинг'}, inplace=True)
+    # Создаем DataFrame из списка отзывов
+    df = pd.DataFrame(feedbacks)
 
-# Сохраняем результат в новый CSV файл
-output_file = 'merged_data2.csv'
-merged_df.to_csv(output_file, index=False)
+    # Извлекаем часть имени файла без расширения для создания имени Excel файла
+    filename_base = os.path.splitext(os.path.basename(html_filename))[0]
+    xlsx_filename = os.path.join(output_directory, f'{filename_base}.xlsx')
 
-print(f'Данные объединены и сохранены в файл {output_file}')
+    # Сохраняем DataFrame в XLSX файл
+    with pd.ExcelWriter(xlsx_filename, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False)
+
+    print(f"Отзывы из файла '{html_filename}' успешно сохранены в файл {xlsx_filename}")
+    return True
+
+# Основной код для обработки всех HTML файлов из директории
+html_files_directory = 'Html_отзывы'  # Путь к директории с HTML файлами
+output_directory = 'Отзывы/'  # Путь к директории для сохранения Excel файлов
+
+if not os.path.exists(output_directory):
+    os.makedirs(output_directory)
+    print(f"Создана директория: {output_directory}")
+
+# Получаем список всех HTML файлов в указанной директории
+html_files = [os.path.join(html_files_directory, f) for f in os.listdir(html_files_directory) if f.endswith('.html')]
+
+for html_file in html_files:
+    process_html_to_excel(html_file, output_directory)
