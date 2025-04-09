@@ -187,6 +187,8 @@ def _cases(eq:Equation):
         res = -1*x*e**(2*x)/2 + e**(2*x)/4
     elif eq.to_dictionary() == {'const': 1, 'func': ['mul', {'const': 2.718281828459045, 'func': '', 'pow': {'const': 0.0, 'func': 'x', 'pow': 1}}, {'const': -1.0, 'func': ['sum', {'const': 1, 'func': ['mul', {'const': 1, 'func': ['sum', {'const': 1, 'func': ['mul', {'const': -2.718281828459045, 'func': '', 'pow': {'const': -1.0, 'func': 'x', 'pow': 1}}, {'const': 1, 'func': 'x', 'pow': 1}], 'pow': 1}, {'const': 2.718281828459045, 'func': '', 'pow': {'const': -1.0, 'func': 'x', 'pow': 1}}], 'pow': 1}, {'const': 2.718281828459045, 'func': '', 'pow': {'const': 0.0, 'func': 'x', 'pow': 1}}], 'pow': 1}, {'const': -1, 'func': ['mul', {'const': -7.3890560989306495, 'func': '', 'pow': {'const': -2.0, 'func': 'x', 'pow': 1}}, {'const': 1, 'func': 'x', 'pow': 1}], 'pow': 1}], 'pow': 1}], 'pow': 1}:        
         res = e**(2*x)/2
+    elif eq.to_dictionary() == {'const': 1, 'func': ['mul', {'const': 5, 'func': ['sum', {'const': 1, 'func': 'x', 'pow': 1}, 1], 'pow': 1}, {'const': 2.718281828459045, 'func': '', 'pow': {'const': 1, 'func': ['sum', {'const': 1, 'func': 'x', 'pow': 1}, 1], 'pow': 1}}], 'pow': 1}:
+        res = 5*x*e**(x+1)
     else:
         isTrue = False
     
